@@ -5,7 +5,7 @@ int main()
 {
   float arr[] = {0.897, 0.565, 0.656, 0.1234, 0.665, 0.3434, 0.1126, 0.554, 0.3349, 0.678, 0.3656, 0.9989};
   int n = sizeof(arr) / sizeof(arr[0]);
-  const BUCKET_SIZE = 10;
+  const int BUCKET_SIZE = 10;
 
   // Allocate memory for the buckets
   int i, j, k;

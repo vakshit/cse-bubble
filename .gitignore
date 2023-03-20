@@ -1,0 +1,17 @@
+*/a.out
+*/*.vvp
+*/*.vcd
+
+
+*/.log
+*/.out
+*/.txt
+*/.dat
+*/.bin
+*/.hex
+*/.mif
+*/.coe
+*/.elf
+*/.dmp
+*/.bak
+*/.swp
