@@ -210,24 +210,36 @@ Here is a possible implementation for the instruction decode module based on the
 ```verilog
 module instruction_decode (
   input [31:0] instruction,
+  output [5:0] opcode,
   output [4:0] rs,
   output [4:0] rt,
   output [4:0] rd,
-  output [4:0] imm,
-  output [5:0] opcode,
+  output [4:0] shift,
   output [5:0] funct,
+  output [0:15] imm,
+  output [0:25] jump,
   output [2:0] alu_control
 );
   reg [2:0] alu_reg = 3'b000;;
 
+  // General
   assign opcode = instruction[31:26];
-  assign funct = instruction[5:0];
-
   assign rs = instruction[25:21];
   assign rt = instruction[20:16];
-  assign rd = instruction[15:11];
 
+  // R type
+  assign rd = instruction[15:11];
+  assign shift = instruction[10:6];
+  assign funct = instruction[5:0];
+
+  // I Type
   assign imm = instruction[15:0];
+
+  // J type
+  assign jump = instruction[25:0];
+
+
+
   assign alu_control = alu_reg;
 
   always @(*) begin
@@ -279,18 +291,20 @@ Here is an example testbench for the instruction decode module:
 `timescale 1ns/1ns
 
 module testbench_instruction_decode;
-
-    // Instantiate the module to be tested
-    instruction_decode ID_inst ();
-
     // Define the inputs and expected outputs
     reg [31:0] instr;
-    wire [3:0] opcode;
+    wire [5:0] opcode;
     wire [4:0] rs;
     wire [4:0] rt;
     wire [4:0] rd;
-    wire [5:0] shamt;
+    wire [4:0] shift;
     wire [5:0] funct;
+    wire [15:0] imm;
+    wire [25:0] jump;
+    wire [2:0] alu;
+
+     // Instantiate the module to be tested
+    inst_decode ID_inst (instr, opcode, rs, rt, rd, shift, funct, imm, jump, alu);
 
     // Provide stimulus to the inputs
     initial begin
@@ -298,40 +312,21 @@ module testbench_instruction_decode;
         #10;
         instr = 32'h012a5820;  // add instruction
         #10;
-        instr = 32'h012a5802;  // addi instruction
+        instr = 32'h212A5802;  // addi instruction
         #10;
         instr = 32'h10000005;  // beq instruction
         #10;
-        instr = 32'h08000005;  // j instruction
-        #10;
-        instr = 32'h00000008;  // jr instruction
-        #10;
-        instr = 32'h0c100000;  // jal instruction
-        #10;
-        instr = 32'h00000000;  // nop instruction
-        #10;
-        instr = 32'h00000000;  // nop instruction
-        #10;
-        instr = 32'h00000000;  // nop instruction
-        #10;
+
         $finish;
     end
 
     // Monitor the outputs
-    always @(opcode or rs or rt or rd or shamt or funct) begin
-        $display("opcode = %d, rs = %d, rt = %d, rd = %d, shamt = %d, funct = %d", opcode, rs, rt, rd, shamt, funct);
+    always @(opcode or rs or rt or rd or shift or funct or imm or jump or alu) begin
+        $display("opcode = %d, rs = %d, rt = %d, rd = %d, shift = %d, funct = %d, imm = %d, jump = %d, alu = %d", opcode, rs, rt, rd, shift, funct, imm, jump, alu);
     end
 
-    // Connect the inputs and outputs
-    assign ID_inst.instr = instr;
-    assign opcode = ID_inst.opcode;
-    assign rs = ID_inst.rs;
-    assign rt = ID_inst.rt;
-    assign rd = ID_inst.rd;
-    assign shamt = ID_inst.shamt;
-    assign funct = ID_inst.funct;
-
 endmodule
+
 ```
 
 In this testbench, we have instantiated the instruction_decode module and provided it with a series of input instructions. We have then monitored the outputs opcode, rs, rt, rd, shamt, and funct and printed their values to the console using $display statements.
