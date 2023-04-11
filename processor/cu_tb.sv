@@ -1,4 +1,4 @@
-`include "cu_straight.sv"
+`include "cu.sv"
 
 module cu_tb();
 

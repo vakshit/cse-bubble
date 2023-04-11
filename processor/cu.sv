@@ -39,6 +39,9 @@ module CU #(
   // ALU registers
   reg [31:0] alu_out, data1, data2;
 
+  always @(*) begin
+    $display("clk=%b", clk);
+  end
 
 // declaring modules to be used
 
@@ -82,6 +85,7 @@ module CU #(
     .funct(funct),
     .result(alu_out)
   );
+  
   integer i;
   initial begin
     for (i=0 ;i< 32 ;i=i+1)
@@ -114,7 +118,7 @@ module CU #(
           data2 = imm;
           
           inplace_memory[rd] = alu_out;
-          $display("data1: %d, data2: %d, inplace_memory[rd]: %d", inplace_memory[rs], imm, inplace_memory[rd]);
+          $display("pc: %b, data1: %d, data2: %d, inplace_memory[rd]: %d", pc, inplace_memory[rs], imm, inplace_memory[rd]);
           pc = pc + 1; // regular ALU operation a regular jump
         end
 
