@@ -11,11 +11,11 @@ module inst_decode (
 );
   // General
   assign opcode = instruction[31:26];
-  assign rs = instruction[25:21];
-  assign rt = instruction[20:16];
+  assign rd = instruction[25:21];
+  assign rs = instruction[20:16];
   
   // R type
-  assign rd = instruction[15:11];
+  assign rt = instruction[15:11];
   assign shift = instruction[10:6];
   assign funct = instruction[5:0];
   

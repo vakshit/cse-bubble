@@ -4,7 +4,7 @@
 `include "alu.sv"
 
 module CU #(
-  parameter ADDRESS_WIDTH = 6,
+  parameter ADDRESS_WIDTH = 5,
   parameter INSTRUCTION_SIZE = 32,
   parameter DATA_SIZE = 64
   ) (

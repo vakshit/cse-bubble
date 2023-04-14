@@ -12,7 +12,7 @@ module cu_tb();
 
 
   initial begin
-    clk = 1;
+    clk = 0;
     reset = 0;
   end
   always #5 clk = ~clk;
@@ -20,8 +20,7 @@ module cu_tb();
   initial begin
     $dumpfile("dump.vcd");
     $dumpvars(0, cu_tb);
-    $display("cu_tb.vcd created");
-    # 50
+    # 100
     $finish;
   end
 endmodule

@@ -1,10 +1,10 @@
 module veda #(
   parameter SIZE = 32, 
-  parameter ADDRESS_WIDTH = 6
+  parameter ADDRESS_WIDTH = 5
   ) (
   input clk,
   input rst,
-  input write_enable,
+  input [5:0] opcode,
   input [ADDRESS_WIDTH:0] addr,
   input [31:0] datain,
   input mode,
@@ -13,12 +13,21 @@ module veda #(
 
   integer i;
   reg [31:0] cells [SIZE:0]; // first signifies data bits, second is number of such cells
-  reg [31:0] dataout_reg;
-  assign dataout = dataout_reg;
+  assign dataout = cells[addr];
 
   initial begin
-    dataout_reg <= 0;
-    for (i = 0; i < (SIZE); i = i + 1)
+    cells[0] = 10;
+    cells[1] = 20;
+    cells[2] = 30;
+    cells[3] = 40;
+    cells[4] = 50;
+    cells[5] = 60;
+    cells[6] = 70;
+    cells[7] = 80;
+    cells[8] = 90;
+    cells[9] = 100;
+    cells[10] = 110;
+    for (i = 11; i < (SIZE); i = i + 1)
       cells[i] <= 0;
   end
 
@@ -26,16 +35,11 @@ module veda #(
     if (rst == 1) begin : reset
       for (i = 0; i < (SIZE); i = i + 1)
         cells[i] <= 0;
-    end else begin
-      if (write_enable && mode == 0) begin : scribble
-        cells[addr] <= datain;
-        dataout_reg <= datain;
-      end else if (write_enable && mode == 1) begin : interpret
-        cells[addr] <= datain;
-        dataout_reg <= cells[addr];
-      end else begin : read
-        dataout_reg <= cells[addr];
-      end
+    end else if (opcode == 6'b001110) begin : scribble
+      cells[addr] = datain;
+      $display("Scribbling %d to cell %d", datain, addr);
+      for (i=0;i<SIZE;i=i+1)
+        $display("cell[%d] = %d", i, cells[i]);
     end
   end
 

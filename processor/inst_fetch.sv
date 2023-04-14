@@ -1,7 +1,7 @@
 module instruction_fetch #(
   parameter SIZE = 32, // size of the instruction memory
   parameter INSTR_SIZE = 32, // size of each instruction
-  parameter ADDRESS_WIDTH = 6 // width of the address bus
+  parameter ADDRESS_WIDTH = 5 // width of the address bus
 )(
   input clk,
   input rst,
