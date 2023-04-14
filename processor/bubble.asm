@@ -1,35 +1,89 @@
+
 .data
 
-numbers: .word 8, 100, 0, 3, 7, 9, 2, 7, -3, 0  # create array which holds numbers
-size: .word 10
+arr: .word 6, 2, 7, 1, 9, 4
+n: .word 6
+new_line: .asciiz "\n"
 
 .text
+.globl main
 
-# t0 = 0
-# t9 = 9
-# s0 = 10
-# s8 = 18
-main:
-    la      $s7,    numbers                     # load address of numbers into $s7
-    li      $s0,    0                           # initialize counter 1 for loop 1
-    lw      $s6,    size                        # n
-    addi    $s6,    $s6,        -1              # n-1
-    li      $s1,    0                           # initialize counter 2 for loop 2
+
+print_array:
+addi $sp, $sp, -4
+sw $ra, 0($sp)
+add $t7,$zero,$zero
 
 loop:
-    sll     $t7,    $s1,        2               # multiply $s1 by 2 and put it in t7
-    add     $t7,    $s7,        $t7             # add the address of numbers to t7
-    lw      $t0,    0($t7)                      # load numbers[j]
-    lw      $t1,    4($t7)                      # load numbers[j+1]
-    slt     $t2,    $t0,        $t1             # if t0 < t1
-    bne     $t2,    $zero,      increment
-    sw      $t1,    0($t7)                      # swap
-    sw      $t0,    4($t7)
+bge $t7,$t0,return
+li $v0, 1
+sll $t8,$t7,2
+add $t8, $t8,$a1
+lw $a0,($t8)
+syscall
+li $v0, 4
+la $a0, new_line
+syscall
+addi $t7,$t7,1
+j loop
 
-increment:
-    addi    $s1,    $s1,        1               # increment t1
-    sub     $s5,    $s6,        $s0             # subtract s0 from s6
-    bne     $s1,    $s5,        loop
-    addi    $s0,    $s0,        1               # otherwise add 1 to s0
-    li      $s1,    0                           # reset s1 to 0
-    bne     $s0,    $s6,        loop            # go back with s1 = s1 + 1
+
+return:
+li $v0, 4
+la $a0, new_line
+syscall
+lw $ra,($sp)
+addi $sp,$sp,4
+jr $ra
+
+main:
+# $t0= n
+# $t1 =i
+# $t2= j
+# $t3=arr[j]
+# $t4= j+1
+# $t5= arr[j+1]
+# $t7 inner loop limit
+
+lw $t0, n
+lw $t1, n
+la $a1, arr
+
+jal print_array
+
+outer_loop:
+addi $t1, $t1,-1
+blt $t1,$zero,exit
+add $t2,$zero,$zero
+
+inner_loop:
+bge $t2,$t1,outer_loop
+sll $t6, $t2, 2
+
+add $t6, $t6,$a1
+lw $t3,($t6)
+addi $t4,$t2,1
+sll $t6, $t4,2
+add $t6, $t6,$a1
+lw $t5,($t6)
+blt $t5,$t3,swap
+
+after_condition:
+addi $t2,$t2,1
+j inner_loop
+
+swap:
+sll $t6, $t4,2
+add $t6, $t6,$a1
+sw $t3,($t6)
+
+sll $t6, $t2,2
+add $t6, $t6,$a1
+sw $t5, ($t6)
+j after_condition
+
+
+exit:
+jal print_array
+li $v0, 10      # Exit the program
+syscall
