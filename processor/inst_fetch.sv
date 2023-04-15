@@ -19,10 +19,10 @@ module instruction_fetch #(
   integer i;
   initial begin
 
-    $readmemb("input.txt", cells);
+    $readmemb("bubble.bin", cells);
     
     // display array contents
-    for (i = 0; i < 10; i = i + 1) begin
+    for (i = 0; i < 20; i = i + 1) begin
       $display("cells[%d] = %b", i, cells[i]);
     end
   end

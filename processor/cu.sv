@@ -12,7 +12,7 @@ module CU #(
   input clk, 
   input rst
 );
-  wire [31:0] instruction ; // instruction fetched from instruction memory
+  wire [31:0] instruction; // instruction fetched from instruction memory
   reg [ADDRESS_WIDTH:0] pc; // always points the address of the stored instruction, would always be accesed in instruction memory
   wire [ADDRESS_WIDTH:0] next_pc;
 
@@ -54,6 +54,7 @@ module CU #(
     .clk(clk),
     .rst(rst),
     .opcode(opcode),
+    .pc(pc),
     .addr(addr),
     .datain(datain),
     .mode(mode),
@@ -114,7 +115,7 @@ module CU #(
       pc <= 0;
     else begin
       // write_enable = 1'b0;
-      if (opcode < 6'b000100) begin : aluOps
+      if (opcode < 6'b001000) begin : aluOps
         // data1 = inplace_memory[rs];
         // data2 = inplace_memory[rt];
 
@@ -123,45 +124,45 @@ module CU #(
         $display("[ALU]: rd = %d, rs = %d, rt = %d, imm = %d", inplace_memory[rd], inplace_memory[rs], inplace_memory[rt], imm );
         pc = pc + 1;
       end
-      else if (opcode >= 6'b000100 && opcode < 6'b001000) begin : conditionalBranch
+      else if (opcode >= 6'b001000 && opcode < 6'b010000) begin : conditionalBranch
         pc = next_pc + 1;
         $display("[BRANCH]: pc = %d, next_pc = %d", pc, next_pc);
       end
       // Unconditional branch
       else begin
         case (opcode)
-          6'b001000: pc = jmp[ADDRESS_WIDTH:0]; // jump to register I type
-          6'b001001: pc = inplace_memory[jmp[4:0]]; // jump to register I type
-          6'b001010: begin : JAL
+          6'b010000: pc = jmp[ADDRESS_WIDTH:0]; // jump to register I type
+          6'b010001: pc = inplace_memory[jmp[4:0]]; // jump to register I type
+          6'b010010: begin : JAL
           pc = jmp[ADDRESS_WIDTH:0]; // return from subroutine I type
           ra_reg = pc + 1; // return address in $ra
           end
 
-          6'b001011: begin
+          6'b010011: begin
             inplace_memory[rd] = inplace_memory[rs] < inplace_memory[rt] ? 1 : 0;  // slt (set less than)
             pc = pc + 1;
           end
 
-          6'b001100 : begin
+          6'b010100 : begin
             inplace_memory[rd] = inplace_memory[rs] < imm ? 1 : 0;  // slti (set less than)
             pc = pc + 1;
           end
 
-          6'b001101: begin // load word
+          6'b010101: begin // load word
             write_enable = 1'b0;
             mode = 1'b0;
             addr = rd;
             inplace_memory[rs + imm[4:0]] = dataout;
-            $display("inplace_memory[%d + %d]: %d", rs, imm[4:0], inplace_memory[rs + imm[4:0]]);
+            // $display("inplace_memory[%d + %d]: %d", rs, imm[4:0], inplace_memory[rs + imm[4:0]]);
             pc = pc + 1;
           end
 
-          6'b001110: begin // store word
+          6'b010110: begin // store word
             write_enable = 1'b1;
             mode = 1'b0;
             datain = inplace_memory[rs + imm[4:0]];
             addr = inplace_memory[rd];
-            $display("inplace_memory[rs] = %d, imm = %d, addr = %d", inplace_memory[rs], imm, addr);
+            // $display("inplace_memory[rs] = %d, imm = %d, addr = %d", inplace_memory[rs], imm, addr);
             pc = pc + 1;
           end
         endcase

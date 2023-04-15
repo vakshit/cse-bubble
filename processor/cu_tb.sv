@@ -20,7 +20,7 @@ module cu_tb();
   initial begin
     $dumpfile("dump.vcd");
     $dumpvars(0, cu_tb);
-    # 100
+    # 2000
     $finish;
   end
 endmodule

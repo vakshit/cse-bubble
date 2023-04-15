@@ -5,6 +5,7 @@ module veda #(
   input clk,
   input rst,
   input [5:0] opcode,
+  input [ADDRESS_WIDTH:0] pc,
   input [ADDRESS_WIDTH:0] addr,
   input [31:0] datain,
   input mode,
@@ -41,6 +42,10 @@ module veda #(
       for (i=0;i<SIZE;i=i+1)
         $display("cell[%d] = %d", i, cells[i]);
     end
+
+    if (pc == 5'b11111)
+      for (i=0;i<SIZE;i=i+1)
+        $display("cell[%d] = %d", i, cells[i]);
   end
 
 endmodule
