@@ -17,18 +17,17 @@ module veda #(
   assign dataout = cells[addr];
 
   initial begin
-    cells[0] = 10;
-    cells[1] = 20;
+    cells[0] = 310;
+    cells[1] = 230;
     cells[2] = 30;
-    cells[3] = 40;
+    cells[3] = 50;
     cells[4] = 50;
     cells[5] = 60;
     cells[6] = 70;
     cells[7] = 80;
     cells[8] = 90;
     cells[9] = 100;
-    cells[10] = 110;
-    for (i = 11; i < (SIZE); i = i + 1)
+    for (i = 10; i < (SIZE); i = i + 1)
       cells[i] <= 0;
   end
 
@@ -36,16 +35,13 @@ module veda #(
     if (rst == 1) begin : reset
       for (i = 0; i < (SIZE); i = i + 1)
         cells[i] <= 0;
-    end else if (opcode == 6'b001110) begin : scribble
+    end else if (opcode == 6'b010110) begin : scribble
       cells[addr] = datain;
-      $display("Scribbling %d to cell %d", datain, addr);
-      for (i=0;i<SIZE;i=i+1)
+      // $display("Scribbling %d to cell %d", datain, addr);
+      for (i=0;i<10;i=i+1)
         $display("cell[%d] = %d", i, cells[i]);
-    end
-
-    if (pc == 5'b11111)
-      for (i=0;i<SIZE;i=i+1)
-        $display("cell[%d] = %d", i, cells[i]);
+      $display("----------------------------");
+    end 
   end
 
 endmodule

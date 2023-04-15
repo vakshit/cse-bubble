@@ -44,7 +44,7 @@ module ALU(
       end
       // immediate values
       6'b000001: ot = a + imm; // signed immediate addition
-      6'b000010: ot = a - imm; // unsigned immeidate addition
+      6'b000010: ot = a - imm; // signed immeidate subtraction
       6'b000011: ot = a & {16'b0, imm}; // immeidate and 
       6'b000100: ot = a | {16'b0, imm}; // bitwise OR
       6'b000101: ot = a << imm[4:0]; // left shift

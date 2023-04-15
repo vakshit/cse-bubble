@@ -22,9 +22,9 @@ module instruction_fetch #(
     $readmemb("bubble.bin", cells);
     
     // display array contents
-    for (i = 0; i < 20; i = i + 1) begin
-      $display("cells[%d] = %b", i, cells[i]);
-    end
+    // for (i = 0; i < 20; i = i + 1) begin
+    //   $display("cells[%d] = %b", i, cells[i]);
+    // end
   end
 
   always @(posedge clk) begin

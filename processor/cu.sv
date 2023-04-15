@@ -116,17 +116,15 @@ module CU #(
     else begin
       // write_enable = 1'b0;
       if (opcode < 6'b001000) begin : aluOps
-        // data1 = inplace_memory[rs];
-        // data2 = inplace_memory[rt];
-
         // storing back to register
         inplace_memory[rd] = alu_out;
-        $display("[ALU]: rd = %d, rs = %d, rt = %d, imm = %d", inplace_memory[rd], inplace_memory[rs], inplace_memory[rt], imm );
+        // $display("[%d]. [ALU]: rd = %d, rs = %d, rt = %d, imm = %d", pc+1, inplace_memory[rd], inplace_memory[rs], inplace_memory[rt], imm );
         pc = pc + 1;
       end
       else if (opcode >= 6'b001000 && opcode < 6'b010000) begin : conditionalBranch
+        // $display("[%d]", pc+1);
         pc = next_pc + 1;
-        $display("[BRANCH]: pc = %d, next_pc = %d", pc, next_pc);
+        // $display("[BRANCH]: pc = %d, next_pc = %d", pc, next_pc);
       end
       // Unconditional branch
       else begin
@@ -151,17 +149,18 @@ module CU #(
           6'b010101: begin // load word
             write_enable = 1'b0;
             mode = 1'b0;
-            addr = rd;
-            inplace_memory[rs + imm[4:0]] = dataout;
+            addr = inplace_memory[rs] + imm[ADDRESS_WIDTH:0];
+            inplace_memory[rd] = dataout;
             // $display("inplace_memory[%d + %d]: %d", rs, imm[4:0], inplace_memory[rs + imm[4:0]]);
+            // $display("[%d]. [LOAD]: dataout = %d, source= %d, dest = %d", pc+1, dataout, addr, rd);
             pc = pc + 1;
           end
 
           6'b010110: begin // store word
             write_enable = 1'b1;
             mode = 1'b0;
-            datain = inplace_memory[rs + imm[4:0]];
-            addr = inplace_memory[rd];
+            datain = inplace_memory[rd];
+            addr = inplace_memory[rs] + imm[ADDRESS_WIDTH:0];
             // $display("inplace_memory[rs] = %d, imm = %d, addr = %d", inplace_memory[rs], imm, addr);
             pc = pc + 1;
           end
