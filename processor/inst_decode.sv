@@ -1,3 +1,6 @@
+// 200091 Akshit Verma 
+// 200038 Adit Jain
+
 module inst_decode (
   input [31:0] instruction,
   output [5:0] opcode,

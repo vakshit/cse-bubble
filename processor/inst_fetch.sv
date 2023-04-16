@@ -1,3 +1,6 @@
+// 200091 Akshit Verma 
+// 200038 Adit Jain
+
 module instruction_fetch #(
   parameter SIZE = 32, // size of the instruction memory
   parameter INSTR_SIZE = 32, // size of each instruction
@@ -36,6 +39,4 @@ module instruction_fetch #(
       dataout_reg <= cells[pc];
     end
   end
-
-
 endmodule

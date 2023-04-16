@@ -1,3 +1,6 @@
+// 200091 Akshit Verma 
+// 200038 Adit Jain
+
 `include "veda.sv"
 `include "inst_fetch.sv"
 `include "inst_decode.sv"
@@ -10,6 +13,7 @@ module CU #(
   parameter DATA_SIZE = 64
   ) (
   input clk, 
+  input verbose,
   input rst
 );
   wire [31:0] instruction; // instruction fetched from instruction memory
@@ -28,10 +32,6 @@ module CU #(
   wire [5:0] funct;
   wire [15:0] imm;
   wire [25:0] jmp;
-
-  // // instruction memory registers
-  // reg inst_write_enable = 1'b1, inst_mode = 1'b0;
-  // reg [31:0] inst_datain;
 
   // storage memory registers
   reg write_enable = 1'b0, mode = 1'b0;
@@ -104,33 +104,30 @@ module CU #(
     ra_reg = 0;
   end
 
-  // // handling reset and clock + instruction fetch
-  // always @(posedge clk or negedge rst) begin
-  // if (rst) 
-  //     pc <= 0;
-  // end
 
   always @(posedge clk) begin
     if (rst) 
       pc <= 0;
     else begin
-      // write_enable = 1'b0;
       if (opcode < 6'b001000) begin : aluOps
         // storing back to register
         inplace_memory[rd] = alu_out;
-        // $display("[%d]. [ALU]: rd = %d, rs = %d, rt = %d, imm = %d", pc+1, inplace_memory[rd], inplace_memory[rs], inplace_memory[rt], imm );
+        if (verbose)
+          $display("[%d]. [ALU]: rd = %d, rs = %d, rt = %d, imm = %d", pc+1, inplace_memory[rd], inplace_memory[rs], inplace_memory[rt], imm );
         pc = pc + 1;
       end
       else if (opcode >= 6'b001000 && opcode < 6'b010000) begin : conditionalBranch
-        // $display("[%d]", pc+1);
+        if (verbose)
+          $display("[%d]", pc+1);
         pc = next_pc + 1;
-        // $display("[BRANCH]: pc = %d, next_pc = %d", pc, next_pc);
+        if (verbose)
+          $display("[BRANCH]: pc = %d, next_pc = %d", pc, next_pc);
       end
       // Unconditional branch
       else begin
         case (opcode)
           6'b010000: pc = jmp[ADDRESS_WIDTH:0]; // jump to register I type
-          6'b010001: pc = inplace_memory[jmp[4:0]]; // jump to register I type
+          6'b010001: pc = inplace_memory[jmp[4:0]]; 
           6'b010010: begin : JAL
           pc = jmp[ADDRESS_WIDTH:0]; // return from subroutine I type
           ra_reg = pc + 1; // return address in $ra
@@ -151,8 +148,8 @@ module CU #(
             mode = 1'b0;
             addr = inplace_memory[rs] + imm[ADDRESS_WIDTH:0];
             inplace_memory[rd] = dataout;
-            // $display("inplace_memory[%d + %d]: %d", rs, imm[4:0], inplace_memory[rs + imm[4:0]]);
-            // $display("[%d]. [LOAD]: dataout = %d, source= %d, dest = %d", pc+1, dataout, addr, rd);
+            if (verbose)
+              $display("[%d]. [LOAD]: dataout = %d, source= %d, dest = %d", pc+1, dataout, addr, rd);
             pc = pc + 1;
           end
 
@@ -161,7 +158,6 @@ module CU #(
             mode = 1'b0;
             datain = inplace_memory[rd];
             addr = inplace_memory[rs] + imm[ADDRESS_WIDTH:0];
-            // $display("inplace_memory[rs] = %d, imm = %d, addr = %d", inplace_memory[rs], imm, addr);
             pc = pc + 1;
           end
         endcase

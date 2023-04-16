@@ -1,3 +1,6 @@
+// 200091 Akshit Verma 
+// 200038 Adit Jain
+
 module ALU(
   input clk,
   input [5:0] opcode,
